@@ -22,11 +22,10 @@ ENV DB_PASSWORD=${DB_PASSWORD}
 
 COPY . .
 
-RUN npm ci
+RUN npm install && npm run build
 # RUN npm run build
 # RUN npm run runmigrations
 
-EXPOSE $API_PORT
-EXPOSE $DATABASE_URL
+EXPOSE $PORT
 
 CMD ["sh", "-c", "npm run dev"]

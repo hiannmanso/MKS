@@ -44,7 +44,7 @@ services:
       - DB_NAME=mksdb_095p
       - JWT_KEY=secretpassword
       - JWT_EXPIRATION=1d
-      - URL_REDIS=redis://redis-mks:6379
+      - URL_REDIS=rediss://red-colat2mn7f5s73b4rlc0:cvUdQ2dmPGAbTyCG5TXAVYBxUHhBXTKJ@oregon-redis.render.com:6379
 
     ports:
       - 3001:3001
