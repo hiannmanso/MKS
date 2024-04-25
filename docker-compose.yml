@@ -1,0 +1,57 @@
+version: "3.3"
+
+networks:
+  proxy:
+    driver: bridge
+
+services:
+  database-mks:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_PASSWORD=mks-test-dev
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - ./mks_volume/:/var/lib/postgresql/data1
+    networks:
+      - proxy
+
+  redis-mks:
+    image: redis
+    restart: always
+    ports:
+      - 6379:6379
+    expose:
+      - 6379
+    networks:
+      - proxy
+
+  back-end-mks:
+    depends_on:
+      - redis-mks
+      - database-mks
+    build: ./api
+    restart: always
+    environment:
+      - PORT=3001
+      - DB_HOST=dpg-colaqk6n7f5s73b4q9f0-a.oregon-postgres.render.com
+      - DB_USERNAME=mksdb_095p_user
+      - DB_PASSWORD=2Ee68MTYTqJZU4ASWhHTCmoePRcRi6m0
+      - DB_NAME=mksdb_095p
+      - JWT_KEY=secretpassword
+      - JWT_EXPIRATION=1d
+      - URL_REDIS=redis://redis-mks:6379
+
+    ports:
+      - 3001:3001
+    expose:
+      - 3001
+    networks:
+      - proxy
+  
+volumes:
+  mks_volume:
