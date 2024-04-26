@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 
 import { Film } from '../entity/film.entity';
 import {
   FilmBodyResponse,
   FilmBodyWithCategories,
+  FilterOptions,
 } from '../interfaces/film.interface';
 import { FilmDto, FilmPutDto } from '../schemas/film.schema';
 import { DeleteBody } from 'src/interfaces/category.interface';
@@ -17,10 +18,27 @@ export class FilmRepository {
     private readonly filmRepository: Repository<Film>,
   ) {}
 
-  async findAll(): Promise<FilmBodyWithCategories[]> {
-    return this.filmRepository.find({
+  async findAll(filters: FilterOptions): Promise<FilmBodyResponse[]> {
+    const query: any = {};
+
+    if (filters.author) {
+      query.author = Like(`%${filters.author}%`);
+    }
+
+    if (filters.name) {
+      query.name = Like(`%${filters.name}%`);
+    }
+
+    if (filters.year) {
+      query.year = filters.year;
+    }
+
+    const result = await this.filmRepository.find({
+      where: query,
       relations: ['categories'],
     });
+
+    return result;
   }
 
   async findById(id: string): Promise<FilmBodyWithCategories | null> {

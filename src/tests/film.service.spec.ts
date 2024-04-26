@@ -66,9 +66,10 @@ describe('FilmService', () => {
 
     mockFilmRepository.findAll.mockResolvedValue(mockFilms);
 
-    const result = await service.findAll();
+    const result = await service.findAll({});
 
     expect(result).toEqual(mockFilms);
+
     expect(mockFilmRepository.findAll).toHaveBeenCalled();
   });
 

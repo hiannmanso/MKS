@@ -6,12 +6,20 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiHeader, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiHeader,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   FilmBodyResponse,
   FilmBodyWithCategories,
+  FilterOptions,
 } from 'src/interfaces/film.interface';
 import { FilmDto, FilmPutDto } from 'src/schemas/film.schema';
 
@@ -31,9 +39,23 @@ export class FilmController {
     name: 'Authorization',
     description: 'Token de autorização JWT',
   })
+  @ApiQuery({
+    name: 'author',
+    description: 'Filtrar por autor',
+    required: false,
+  })
+  @ApiQuery({ name: 'name', description: 'Filtrar por nome', required: false })
+  @ApiQuery({ name: 'year', description: 'Filtrar por ano', required: false })
+  @ApiQuery({
+    name: 'category',
+    description: 'Filtrar por categoria',
+    required: false,
+  })
   @Get()
-  async findAll(): Promise<FilmBodyWithCategories[]> {
-    return this.filmService.findAll();
+  async findAll(
+    @Query() filters: FilterOptions,
+  ): Promise<FilmBodyWithCategories[]> {
+    return this.filmService.findAll(filters);
   }
 
   @UseGuards(AuthGuard)

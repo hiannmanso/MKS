@@ -1,5 +1,9 @@
 import { CategoryBody } from './category.interface';
-
+export interface FilterOptions {
+  author?: string;
+  name?: string;
+  year?: number;
+}
 export interface FilmBody {
   id?: number;
   name: string;

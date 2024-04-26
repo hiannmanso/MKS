@@ -16,25 +16,12 @@ import { UserRepository } from './repositories/user.repository';
 import { JwtModule } from '@nestjs/jwt';
 
 import * as dotenv from 'dotenv';
+import databaseConfig from './config/database';
+
 dotenv.config();
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT),
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-      entities: [User, Film, Category],
-      ssl: true,
-      extra: {
-        ssl: {
-          rejectUnauthorized: false,
-        },
-      },
-      synchronize: true,
-    }),
+    TypeOrmModule.forRoot(databaseConfig),
     TypeOrmModule.forFeature([User, Film, Category]),
     JwtModule.register({
       global: true,

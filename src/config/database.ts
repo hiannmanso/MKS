@@ -1,19 +1,39 @@
-import { DataSource } from 'typeorm';
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { User } from '../entity/user.entity';
+import { Film } from '../entity/film.entity';
+import { Category } from '../entity/category.entity';
+import * as dotenv from 'dotenv';
+dotenv.config();
+let databaseConfig: TypeOrmModuleOptions;
 
-export const AppDataSource = new DataSource({
-  type: 'postgres',
-  host: 'localhost',
-  port: 5432,
-  username: 'postgres',
-  password: 'postgres',
-  database: 'mks_db',
-  synchronize: true,
-});
+if (process.env.STATUS == 'PROD') {
+  databaseConfig = {
+    type: 'postgres',
+    host: process.env.DB_HOST,
+    port: Number(process.env.DB_PORT),
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    entities: [User, Film, Category],
+    ssl: true,
+    extra: {
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    },
+    synchronize: true,
+  };
+} else {
+  databaseConfig = {
+    type: 'postgres',
+    host: process.env.DB_HOST,
+    port: Number(process.env.DB_PORT),
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    entities: [User, Film, Category],
+    synchronize: true,
+  };
+}
 
-AppDataSource.initialize()
-  .then(() => {
-    console.log('Data Source has been initialized!');
-  })
-  .catch((err) => {
-    console.error('Error during Data Source initialization', err);
-  });
+export default databaseConfig;

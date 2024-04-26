@@ -16,8 +16,8 @@ export class CategoryService {
 
   async findAll(): Promise<CategoryBodyWithFilms[]> {
     const cacheKey = 'categories:all';
+    const redisClient = getClientRedis();
     if (isRedisOnline()) {
-      const redisClient = getClientRedis();
       const cachedData = await redisClient.get(cacheKey);
       if (cachedData) {
         console.log(`Cached data: ${cachedData}`);
@@ -26,7 +26,6 @@ export class CategoryService {
     }
     const categories = await this.categoryRepository.findAll();
     if (isRedisOnline()) {
-      const redisClient = getClientRedis();
       await redisClient.set(cacheKey, JSON.stringify(categories), 'EX', 60);
     }
     return categories;
@@ -34,8 +33,8 @@ export class CategoryService {
 
   async findById(id: string): Promise<CategoryBodyWithFilms> {
     const cacheKey = `categories:${id}`;
+    const redisClient = getClientRedis();
     if (isRedisOnline()) {
-      const redisClient = getClientRedis();
       const cachedData = await redisClient.get(cacheKey);
       if (cachedData) {
         console.log(`Cached data: ${cachedData}`);
@@ -43,14 +42,15 @@ export class CategoryService {
       }
     }
     const category = await this.categoryRepository.findById(id);
+
     if (isRedisOnline()) {
-      const redisClient = getClientRedis();
       await redisClient.set(cacheKey, JSON.stringify(category), 'EX', 60);
     }
     return category;
   }
 
   async create(category: CategoryPostBody): Promise<CategoryBody> {
+    const redisClient = getClientRedis();
     const existingCategory = await this.categoryRepository
       .findByName(category.name)
       .catch((error) => {
@@ -72,8 +72,8 @@ export class CategoryService {
           `An error occurred while creating the category: ${error}`,
         );
       });
+
     if (isRedisOnline()) {
-      const redisClient = getClientRedis();
       await redisClient.del('categories:all');
     }
     return categoryData;
@@ -87,23 +87,24 @@ export class CategoryService {
         'This category does not exist. please try other id.',
       );
 
+    const redisClient = getClientRedis();
     const updateCategory = await this.categoryRepository.update(id, category);
     if (isRedisOnline()) {
-      const redisClient = getClientRedis();
       await redisClient.del('categories:all');
     }
     return updateCategory;
   }
 
   async delete(id: string): Promise<DeleteBody> {
+    const redisClient = getClientRedis();
     const existingCategory = await this.categoryRepository.findById(id);
     if (!existingCategory)
       throwUnauthorizedException(
         'This category does not exist. please try other id.',
       );
     const deleteCategory = await this.categoryRepository.delete(id);
+
     if (isRedisOnline()) {
-      const redisClient = getClientRedis();
       await redisClient.del('categories:all');
       await redisClient.del(`categories:${id}`);
     }
