@@ -11,7 +11,9 @@ ARG DB_USERNAME
 ARG DB_PASSWORD
 ARG DB_NAME
 ARG DB_PORT
+ARG STATUS
 
+ENV STATUS=${STATUS}
 ENV DB_PORT=${DB_PORT}
 ENV URL_REDIS=$URL_REDIS
 ENV API_PORT=$API_PORT
@@ -24,9 +26,9 @@ ENV DB_PASSWORD=${DB_PASSWORD}
 
 COPY . .
 
+
 RUN npm install && npm run build
-# RUN npm run build
-# RUN npm run runmigrations
+
 
 EXPOSE $PORT
 

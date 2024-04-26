@@ -34,9 +34,10 @@ services:
     depends_on:
       - redis-mks
       - database-mks
-    build: ./api
+    build: ./
     restart: always
-    environment:
+    environment: 
+    # variaveis de ambiente apontada pra produção(se preferir usar localmente redirecionar as variaveis)
       - DB_PORT=5432
       - PORT=3001
       - DB_HOST=dpg-colaqk6n7f5s73b4q9f0-a.oregon-postgres.render.com
@@ -45,7 +46,8 @@ services:
       - DB_NAME=mksdb_095p
       - JWT_KEY=secretpassword
       - JWT_EXPIRATION=1d
-      - URL_REDIS=rediss://red-colat2mn7f5s73b4rlc0:cvUdQ2dmPGAbTyCG5TXAVYBxUHhBXTKJ@oregon-redis.render.com:6379
+      - URL_REDIS="redis://redis-mks:6379"
+      - STATUS=PROD
 
     ports:
       - 3001:3001
