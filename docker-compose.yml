@@ -37,6 +37,7 @@ services:
     build: ./api
     restart: always
     environment:
+      - DB_PORT=5432
       - PORT=3001
       - DB_HOST=dpg-colaqk6n7f5s73b4q9f0-a.oregon-postgres.render.com
       - DB_USERNAME=mksdb_095p_user

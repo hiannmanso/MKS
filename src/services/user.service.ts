@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { throwUnauthorizedException } from '../helper/error.helper';
-import { UserRepository } from 'src/repositories/user.repository';
-import { SignInBody, Token, UserBody } from 'src/interfaces/user.interface';
+import { UserRepository } from '../repositories/user.repository';
+import { SignInBody, Token, UserBody } from '../interfaces/user.interface';
 import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class UserService {

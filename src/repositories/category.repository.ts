@@ -31,10 +31,10 @@ export class CategoryRepository {
     return category;
   }
 
-  async findByName(name: string): Promise<CategoryBodyWithFilms | null> {
-    return this.categoryRepository.findOne({ where: { name } });
+  async findByName(name: string): Promise<Category | null> {
+    const category = await this.categoryRepository.findOne({ where: { name } });
+    return category || null; // Retorna a categoria encontrada ou null se não encontrada
   }
-
   async create(category: CategoryPostBody): Promise<CategoryBodyWithFilms> {
     const newCategory = this.categoryRepository.create(category);
     return this.categoryRepository.save(newCategory);

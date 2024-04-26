@@ -8,8 +8,8 @@ import {
 } from '../interfaces/film.interface';
 import { FilmDto } from '../schemas/film.schema';
 import { CategoryRepository } from '../repositories/category.repository';
-import { DeleteBody } from 'src/interfaces/category.interface';
-import { getClientRedis, isRedisOnline } from 'src/redisClient';
+import { DeleteBody } from '../interfaces/category.interface';
+import { getClientRedis, isRedisOnline } from '../redisClient';
 
 @Injectable()
 export class FilmService {
@@ -19,27 +19,26 @@ export class FilmService {
   ) {}
 
   async findAll(): Promise<FilmBodyWithCategories[]> {
-    const redisClient = getClientRedis();
     const cacheKey = 'films:all';
     if (isRedisOnline()) {
+      const redisClient = getClientRedis();
       const cachedData = await redisClient.get(cacheKey);
       if (cachedData) {
-        console.log(`Cached data: ${cachedData}`);
         return JSON.parse(cachedData);
       }
     }
     const films = await this.filmRepository.findAll();
     if (isRedisOnline()) {
-      console.log(`${films}`);
+      const redisClient = getClientRedis();
       await redisClient.set(cacheKey, JSON.stringify(films), 'EX', 60);
     }
     return films;
   }
 
   async findById(id: string): Promise<FilmBodyWithCategories | null> {
-    const redisClient = getClientRedis();
     const cacheKey = `films:${id}`;
     if (isRedisOnline()) {
+      const redisClient = getClientRedis();
       const cachedData = await redisClient.get(cacheKey);
       if (cachedData) {
         console.log(`Cached data: ${cachedData}`);
@@ -48,7 +47,7 @@ export class FilmService {
     }
     const films = await this.filmRepository.findById(id);
     if (isRedisOnline()) {
-      console.log(`${films}`);
+      const redisClient = getClientRedis();
       await redisClient.set(cacheKey, JSON.stringify(films), 'EX', 60);
     }
     return films;
@@ -75,8 +74,8 @@ export class FilmService {
         `An error occurred while creating the films: ${error}`,
       );
     });
-    const redisClient = getClientRedis();
     if (isRedisOnline()) {
+      const redisClient = getClientRedis();
       await redisClient.del('films:all');
     }
 
@@ -93,8 +92,8 @@ export class FilmService {
     console.log(id, film);
 
     const updatedFilm = await this.filmRepository.update(id, film);
-    const redisClient = getClientRedis();
     if (isRedisOnline()) {
+      const redisClient = getClientRedis();
       await redisClient.del('films:all');
       await redisClient.del(`films:${updatedFilm.id}`);
     }
@@ -108,8 +107,8 @@ export class FilmService {
         'This film does not exist. please try other id.',
       );
     const deleteFilm = await this.filmRepository.delete(id);
-    const redisClient = getClientRedis();
     if (isRedisOnline()) {
+      const redisClient = getClientRedis();
       await redisClient.del('films:all');
       await redisClient.del(`films:${id}`);
     }

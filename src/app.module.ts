@@ -14,6 +14,7 @@ import { UserController } from './controllers/user.controller';
 import { UserService } from './services/user.service';
 import { UserRepository } from './repositories/user.repository';
 import { JwtModule } from '@nestjs/jwt';
+
 import * as dotenv from 'dotenv';
 dotenv.config();
 @Module({
@@ -26,12 +27,12 @@ dotenv.config();
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: [User, Film, Category],
-      ssl: true,
-      extra: {
-        ssl: {
-          rejectUnauthorized: false,
-        },
-      },
+      // ssl: true,
+      // extra: {
+      //   ssl: {
+      //     rejectUnauthorized: false,
+      //   },
+      // },
       synchronize: true,
     }),
     TypeOrmModule.forFeature([User, Film, Category]),
