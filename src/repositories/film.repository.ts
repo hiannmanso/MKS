@@ -18,7 +18,7 @@ export class FilmRepository {
     private readonly filmRepository: Repository<Film>,
   ) {}
 
-  async findAll(filters: FilterOptions): Promise<FilmBodyResponse[]> {
+  async findAll(filters: FilterOptions): Promise<FilmBodyWithCategories[]> {
     const query: any = {};
 
     if (filters.author) {

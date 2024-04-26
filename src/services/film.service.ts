@@ -19,7 +19,7 @@ export class FilmService {
     private readonly categoryRepository: CategoryRepository,
   ) {}
 
-  async findAll(filters: FilterOptions): Promise<any[]> {
+  async findAll(filters: FilterOptions): Promise<FilmBodyWithCategories[]> {
     const cacheKey = this.generateCacheKey(filters);
     console.log(cacheKey);
     const redisClient = getClientRedis();
