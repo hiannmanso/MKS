@@ -81,6 +81,21 @@ export class FilmService {
         'This Film already exists, please try other name.',
       );
     }
+
+    await Promise.all(
+      film.categories.map(async (category) => {
+        const existingCategory = await this.categoryRepository.findById(
+          category.id.toString(),
+        );
+        console.log(existingCategory);
+        if (existingCategory === null) {
+          throwUnauthorizedException(
+            `This category does not exist, please try another id:${category.id}.`,
+          );
+        }
+      }),
+    );
+
     const filmData = await this.filmRepository.create(film).catch((error) => {
       console.log(error);
       throwUnauthorizedException(
